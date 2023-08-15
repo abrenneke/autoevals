@@ -1,7 +1,12 @@
+"use strict";
+var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __defProps = Object.defineProperties;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
+var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getOwnPropSymbols = Object.getOwnPropertySymbols;
+var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __propIsEnum = Object.prototype.propertyIsEnumerable;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
@@ -29,34 +34,71 @@ var __objRest = (source, exclude) => {
     }
   return target;
 };
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// js/llm.ts
-import * as yaml from "js-yaml";
-import mustache from "mustache";
-
-// js/oai.ts
-import {
-  Configuration,
-  OpenAIApi
-} from "openai";
+// js/node.ts
+var node_exports = {};
+__export(node_exports, {
+  Battle: () => Battle,
+  ClosedQA: () => ClosedQA,
+  Factuality: () => Factuality,
+  Humor: () => Humor,
+  LLMClassifierFromSpec: () => LLMClassifierFromSpec,
+  LLMClassifierFromSpecFile: () => LLMClassifierFromSpecFile,
+  LLMClassifierFromTemplate: () => LLMClassifierFromTemplate,
+  LevenshteinScorer: () => LevenshteinScorer,
+  OpenAIClassifier: () => OpenAIClassifier,
+  Possible: () => Possible,
+  Security: () => Security,
+  Sql: () => Sql,
+  Summary: () => Summary,
+  Translation: () => Translation,
+  templates: () => templates
+});
+module.exports = __toCommonJS(node_exports);
 
 // js/env.ts
 var Env = {
   OPENAI_API_KEY: void 0
 };
 
+// js/llm.ts
+var yaml = __toESM(require("js-yaml"));
+var import_mustache = __toESM(require("mustache"));
+
 // js/oai.ts
+var import_openai = require("openai");
 async function cachedChatCompletion(params, options) {
   const { cache, openAiApiKey, openAiOrganizationId } = options;
   const cached = await (cache == null ? void 0 : cache.get(params));
   if (cached) {
     return cached;
   }
-  const config = new Configuration({
+  const config = new import_openai.Configuration({
     apiKey: openAiApiKey || Env.OPENAI_API_KEY,
     organization: openAiOrganizationId
   });
-  const openai = new OpenAIApi(config);
+  const openai = new import_openai.OpenAIApi(config);
   if (openai === null) {
     throw new Error("OPENAI_API_KEY not set");
   }
@@ -218,7 +260,7 @@ async function OpenAIClassifier(args) {
     expected
   }, remainingRenderArgs);
   const messages = messagesArg.map((m) => __spreadProps(__spreadValues({}, m), {
-    content: m.content && mustache.render(m.content, renderArgs)
+    content: m.content && import_mustache.default.render(m.content, renderArgs)
   }));
   try {
     const resp = await cachedChatCompletion(
@@ -362,7 +404,7 @@ var Summary = buildLLMClassifier("Summary");
 var Translation = buildLLMClassifier("Translation");
 
 // js/string.ts
-import levenshtein from "js-levenshtein";
+var import_js_levenshtein = __toESM(require("js-levenshtein"));
 var LevenshteinScorer = (args) => {
   if (args.expected === void 0) {
     throw new Error("LevenshteinScorer requires an expected value");
@@ -371,14 +413,18 @@ var LevenshteinScorer = (args) => {
   const maxLen = Math.max(output.length, expected.length);
   let score = 1;
   if (maxLen > 0) {
-    score = 1 - levenshtein(output, expected) / maxLen;
+    score = 1 - (0, import_js_levenshtein.default)(output, expected) / maxLen;
   }
   return {
     name: "levenshtein",
     score
   };
 };
-export {
+
+// js/node.ts
+Env.OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
   Battle,
   ClosedQA,
   Factuality,
@@ -394,5 +440,5 @@ export {
   Summary,
   Translation,
   templates
-};
-//# sourceMappingURL=bundle.js.map
+});
+//# sourceMappingURL=node.cjs.map

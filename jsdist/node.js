@@ -30,6 +30,11 @@ var __objRest = (source, exclude) => {
   return target;
 };
 
+// js/env.ts
+var Env = {
+  OPENAI_API_KEY: void 0
+};
+
 // js/llm.ts
 import * as yaml from "js-yaml";
 import mustache from "mustache";
@@ -39,13 +44,6 @@ import {
   Configuration,
   OpenAIApi
 } from "openai";
-
-// js/env.ts
-var Env = {
-  OPENAI_API_KEY: void 0
-};
-
-// js/oai.ts
 async function cachedChatCompletion(params, options) {
   const { cache, openAiApiKey, openAiOrganizationId } = options;
   const cached = await (cache == null ? void 0 : cache.get(params));
@@ -378,6 +376,9 @@ var LevenshteinScorer = (args) => {
     score
   };
 };
+
+// js/node.ts
+Env.OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 export {
   Battle,
   ClosedQA,
@@ -395,4 +396,4 @@ export {
   Translation,
   templates
 };
-//# sourceMappingURL=bundle.js.map
+//# sourceMappingURL=node.js.map

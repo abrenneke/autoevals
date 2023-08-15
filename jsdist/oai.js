@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.cachedChatCompletion = void 0;
 const openai_1 = require("openai");
-;
+const env_1 = require("./env");
 function cachedChatCompletion(params, options) {
     return __awaiter(this, void 0, void 0, function* () {
         const { cache, openAiApiKey, openAiOrganizationId } = options;
@@ -19,7 +19,10 @@ function cachedChatCompletion(params, options) {
         if (cached) {
             return cached;
         }
-        const config = new openai_1.Configuration({ apiKey: openAiApiKey, organization: openAiOrganizationId });
+        const config = new openai_1.Configuration({
+            apiKey: openAiApiKey || env_1.Env.OPENAI_API_KEY,
+            organization: openAiOrganizationId,
+        });
         const openai = new openai_1.OpenAIApi(config);
         if (openai === null) {
             throw new Error("OPENAI_API_KEY not set");

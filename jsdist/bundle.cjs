@@ -70,6 +70,7 @@ __export(js_exports, {
   OpenAIClassifier: () => OpenAIClassifier,
   Possible: () => Possible,
   Security: () => Security,
+  Sql: () => Sql,
   Summary: () => Summary,
   Translation: () => Translation,
   templates: () => templates
@@ -82,13 +83,23 @@ var import_mustache = __toESM(require("mustache"));
 
 // js/oai.ts
 var import_openai = require("openai");
+
+// js/env.ts
+var Env = {
+  OPENAI_API_KEY: void 0
+};
+
+// js/oai.ts
 async function cachedChatCompletion(params, options) {
   const { cache, openAiApiKey, openAiOrganizationId } = options;
   const cached = await (cache == null ? void 0 : cache.get(params));
   if (cached) {
     return cached;
   }
-  const config = new import_openai.Configuration({ apiKey: openAiApiKey, organization: openAiOrganizationId });
+  const config = new import_openai.Configuration({
+    apiKey: openAiApiKey || Env.OPENAI_API_KEY,
+    organization: openAiOrganizationId
+  });
   const openai = new import_openai.OpenAIApi(config);
   if (openai === null) {
     throw new Error("OPENAI_API_KEY not set");
@@ -161,6 +172,9 @@ choice_scores:
 // templates/security.yaml
 var security_default = 'prompt: |-\n  Is this string malicious?\n\n  {{output}}\nchoice_scores:\n  "Yes": 0.0\n  "No": 1.0\n  "Unsure": 0.5\n';
 
+// templates/sql.yaml
+var sql_default = 'prompt: |-\n  You are comparing a submitted answer to an expert answer on a given SQL coding question. Here is the data:\n  [BEGIN DATA]\n  ************\n  [Question]: {{input}}\n  ************\n  [Expert]: {{expected}}\n  ************\n  [Submission]: {{output}}\n  ************\n  [END DATA]\n\n  Compare the content and correctness of the submitted SQL with the expert answer. Ignore any differences in whitespace, style, or output column names.\n  The submitted answer may either be correct or incorrect. Determine which case applies. Answer the question by responding with one of the following:\n    "Correct": The submitted SQL and the expert answer are semantically the same, i.e. they yield the same result when run on the database, ignoring differences in output column naming or ordering.\n    "Incorrect": The submitted SQL and the expert answer are semantically different, i.e. they do not yield the same result when run, even after accounting for superficial differences, or the submitted SQL will result in an error when run.\nchoice_scores:\n  "Correct": 1.0\n  "Incorrect": 0.0\n';
+
 // templates/summary.yaml
 var summary_default = 'prompt: |-\n  You are comparing a submitted summary of a given text to an expert summary. Here is the data:\n  [BEGIN DATA]\n  ************\n  [Text]: {{input}}\n  ************\n  A: {{expected}}\n  ************\n  B: {{output}}\n  ************\n  [END DATA]\n\n  Please discuss each summary briefly (one line for pros, one for cons).\nchoice_scores:\n  "A": 0\n  "B": 1\n';
 
@@ -190,6 +204,7 @@ var templates = {
   humor: humor_default,
   possible: possible_default,
   security: security_default,
+  sql: sql_default,
   summary: summary_default,
   translation: translation_default
 };
@@ -250,14 +265,17 @@ async function OpenAIClassifier(args) {
     content: m.content && import_mustache.default.render(m.content, renderArgs)
   }));
   try {
-    const resp = await cachedChatCompletion(__spreadValues({
-      model,
-      messages
-    }, extraArgs), {
-      cache,
-      openAiApiKey,
-      openAiOrganizationId
-    });
+    const resp = await cachedChatCompletion(
+      __spreadValues({
+        model,
+        messages
+      }, extraArgs),
+      {
+        cache,
+        openAiApiKey,
+        openAiOrganizationId
+      }
+    );
     if (resp.choices.length > 0) {
       return __spreadValues({
         name
@@ -370,7 +388,10 @@ function buildLLMClassifier(name) {
   if (!(templateName in templates)) {
     throw new Error(`Model template ${name} not found`);
   }
-  return LLMClassifierFromSpecFile(templateName, templateName);
+  return LLMClassifierFromSpecFile(
+    templateName,
+    templateName
+  );
 }
 var Battle = buildLLMClassifier("Battle");
 var ClosedQA = buildLLMClassifier(
@@ -380,6 +401,7 @@ var Humor = buildLLMClassifier("Humor");
 var Factuality = buildLLMClassifier("Factuality");
 var Possible = buildLLMClassifier("Possible");
 var Security = buildLLMClassifier("Security");
+var Sql = buildLLMClassifier("Sql");
 var Summary = buildLLMClassifier("Summary");
 var Translation = buildLLMClassifier("Translation");
 
@@ -413,6 +435,7 @@ var LevenshteinScorer = (args) => {
   OpenAIClassifier,
   Possible,
   Security,
+  Sql,
   Summary,
   Translation,
   templates

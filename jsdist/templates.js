@@ -10,6 +10,7 @@ const factuality_yaml_1 = __importDefault(require("../templates/factuality.yaml"
 const humor_yaml_1 = __importDefault(require("../templates/humor.yaml"));
 const possible_yaml_1 = __importDefault(require("../templates/possible.yaml"));
 const security_yaml_1 = __importDefault(require("../templates/security.yaml"));
+const sql_yaml_1 = __importDefault(require("../templates/sql.yaml"));
 const summary_yaml_1 = __importDefault(require("../templates/summary.yaml"));
 const translation_yaml_1 = __importDefault(require("../templates/translation.yaml"));
 exports.templates = {
@@ -19,6 +20,7 @@ exports.templates = {
     humor: humor_yaml_1.default,
     possible: possible_yaml_1.default,
     security: security_yaml_1.default,
+    sql: sql_yaml_1.default,
     summary: summary_yaml_1.default,
-    translation: translation_yaml_1.default
+    translation: translation_yaml_1.default,
 };

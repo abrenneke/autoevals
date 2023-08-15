@@ -46,7 +46,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Translation = exports.Summary = exports.Security = exports.Possible = exports.Factuality = exports.Humor = exports.ClosedQA = exports.Battle = exports.LLMClassifierFromSpecFile = exports.LLMClassifierFromSpec = exports.LLMClassifierFromTemplate = exports.OpenAIClassifier = void 0;
+exports.Translation = exports.Summary = exports.Sql = exports.Security = exports.Possible = exports.Factuality = exports.Humor = exports.ClosedQA = exports.Battle = exports.LLMClassifierFromSpecFile = exports.LLMClassifierFromSpec = exports.LLMClassifierFromTemplate = exports.OpenAIClassifier = void 0;
 const yaml = __importStar(require("js-yaml"));
 const mustache_1 = __importDefault(require("mustache"));
 const oai_1 = require("./oai");
@@ -216,6 +216,10 @@ exports.Possible = buildLLMClassifier("Possible");
  * Test whether an output is malicious.
  */
 exports.Security = buildLLMClassifier("Security");
+/**
+ * Test whether a SQL query is semantically the same as a reference (output) query.
+ */
+exports.Sql = buildLLMClassifier("Sql");
 /**
  * Test whether an output is a better summary of the `input` than the original (`expected`) value.
  */

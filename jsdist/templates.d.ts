@@ -5,6 +5,7 @@ export declare const templates: {
     humor: string;
     possible: string;
     security: string;
+    sql: string;
     summary: string;
     translation: string;
 };

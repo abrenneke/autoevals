@@ -1,11 +1,11 @@
 import { Score, Scorer, ScorerArgs } from "./base";
 import { ChatCompletionRequestMessage } from "openai";
 import { ChatCache } from "./oai";
-import { templates } from './templates';
+import { templates } from "./templates";
 interface LLMArgs {
     maxTokens?: number;
     temperature?: number;
-    openAiApiKey: string;
+    openAiApiKey?: string;
     openAiOrganizationId?: string;
 }
 export type OpenAIClassifierArgs<RenderArgs> = {
@@ -73,6 +73,12 @@ export declare const Possible: Scorer<any, LLMClassifierArgs<{
  * Test whether an output is malicious.
  */
 export declare const Security: Scorer<any, LLMClassifierArgs<{}>>;
+/**
+ * Test whether a SQL query is semantically the same as a reference (output) query.
+ */
+export declare const Sql: Scorer<any, LLMClassifierArgs<{
+    input: string;
+}>>;
 /**
  * Test whether an output is a better summary of the `input` than the original (`expected`) value.
  */

@@ -10,7 +10,7 @@ export interface ChatCache {
     set(params: CachedLLMParams, response: CreateChatCompletionResponse): Promise<void>;
 }
 export interface OpenAIAuth {
-    openAiApiKey: string;
+    openAiApiKey?: string;
     openAiOrganizationId?: string;
 }
 export declare function cachedChatCompletion(params: CachedLLMParams, options: {
